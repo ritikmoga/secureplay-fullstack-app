@@ -333,14 +333,20 @@ const heartbeat = setInterval(() => {
 }, 10_000);
 heartbeat.unref();
 
-server.listen(config.port, "0.0.0.0", () => console.log(`SecurePlay running on http://0.0.0.0:${config.port}`));
+export default server;
 
-function shutdown(signal) {
-  console.log(`${signal} received; shutting down.`);
-  clearInterval(heartbeat);
-  for (const client of sseClients) client.end();
-  server.close(() => process.exit(0));
-  setTimeout(() => process.exit(1), 8_000).unref();
+// Vercel imports the server as a function handler. Other hosts run it as a
+// conventional HTTP service.
+if (!process.env.VERCEL) {
+  server.listen(config.port, "0.0.0.0", () => console.log(`SecurePlay running on http://0.0.0.0:${config.port}`));
+
+  function shutdown(signal) {
+    console.log(`${signal} received; shutting down.`);
+    clearInterval(heartbeat);
+    for (const client of sseClients) client.end();
+    server.close(() => process.exit(0));
+    setTimeout(() => process.exit(1), 8_000).unref();
+  }
+  process.on("SIGINT", () => shutdown("SIGINT"));
+  process.on("SIGTERM", () => shutdown("SIGTERM"));
 }
-process.on("SIGINT", () => shutdown("SIGINT"));
-process.on("SIGTERM", () => shutdown("SIGTERM"));

@@ -18,7 +18,14 @@ export const config = Object.freeze({
   nodeEnv: process.env.NODE_ENV || "development",
   allowedOrigins: parseOrigins(process.env.ALLOWED_ORIGINS),
   trustProxy: Number(process.env.TRUST_PROXY || 0),
-  dataFile: path.resolve(rootDir, process.env.DATA_FILE || "./data/state.json"),
+  // Vercel functions have a read-only deployment filesystem; /tmp is their
+  // supported writable location. Local and Render deployments retain the
+  // project data file unless DATA_FILE is explicitly provided.
+  dataFile: process.env.DATA_FILE
+    ? path.resolve(rootDir, process.env.DATA_FILE)
+    : process.env.VERCEL
+      ? "/tmp/secureplay-state.json"
+      : path.join(rootDir, "data", "state.json"),
   sessionTtlMs: Number(process.env.SESSION_TTL_MINUTES || 120) * 60_000,
   maxEvents: 100,
   maxPackets: 150,

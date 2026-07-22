@@ -3,3 +3,5 @@ node_modules/
 npm-debug.log*
 data/state.json.tmp
 .DS_Store
+
+.vercel

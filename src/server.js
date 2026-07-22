@@ -162,6 +162,11 @@ function serveEventStream(req, res, requestId) {
 
 async function serveStatic(req, res, pathname, requestId) {
   let requested = pathname === "/" ? "/index.html" : pathname;
+  // The readable source file remains available for local development, but is
+  // never served by the production site; browsers receive app.secure.js.
+  if (config.nodeEnv === "production" && requested === "/app.js") {
+    return fail(res, 404, "NOT_FOUND", "Asset not found.", requestId);
+  }
   let filePath = path.resolve(config.publicDir, `.${requested}`);
   if (!filePath.startsWith(config.publicDir)) return fail(res, 403, "FORBIDDEN", "Invalid path.", requestId);
 

@@ -8,6 +8,8 @@ import { config } from "./config.js";
 import { store } from "./store.js";
 import { createDemoSession, postureFromFirewall } from "./security.js";
 import { runSimulation } from "./simulation.js";
+import { analyzeSnapshot } from "./analytics.js";
+import { buildSecurityReport } from "./report.js";
 
 const sessions = new Map();
 const sseClients = new Set();
@@ -242,6 +244,18 @@ const server = http.createServer(async (req, res) => {
         updatedAt: snapshot.updatedAt,
         capabilities: { realNetworkTraffic: false, realFirewallChanges: false, safeSimulation: true, eventStream: true }
       }, requestId);
+    }
+
+    if (req.method === "GET" && pathname === "/api/analytics") {
+      const snapshot = store.getSnapshot();
+      return ok(res, analyzeSnapshot(snapshot), requestId);
+    }
+
+    if (req.method === "GET" && pathname === "/api/reports/security") {
+      const snapshot = store.getSnapshot();
+      const posture = postureFromFirewall(snapshot.firewall);
+      const analysis = analyzeSnapshot(snapshot);
+      return ok(res, { report: buildSecurityReport(snapshot, posture, analysis), generatedAt: analysis.generatedAt }, requestId);
     }
 
     if (req.method === "GET" && pathname === "/api/security/posture") return ok(res, postureFromFirewall(store.getFirewall()), requestId);

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="SecurePlay Network Lab — an interactive frontend case study for secure multiplayer networking, firewall controls, traffic simulation, and packet analysis." />
+  <meta name="description" content="SecurePlay Network Lab â€” an interactive frontend case study for secure multiplayer networking, firewall controls, traffic simulation, and packet analysis." />
   <title>SecurePlay Network Lab</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
@@ -57,7 +57,7 @@
 
       <div class="sidebar-actions">
         <button class="icon-button" id="theme-toggle" aria-label="Toggle interface theme" title="Toggle theme">
-          <span id="theme-icon">☾</span>
+          <span id="theme-icon">â˜¾</span>
         </button>
         <button class="primary-small" id="presentation-mode">Focus mode</button>
       </div>
@@ -65,13 +65,13 @@
 
     <main class="main-content">
       <header class="topbar">
-        <button class="menu-button" id="menu-button" aria-label="Open navigation">☰</button>
+        <button class="menu-button" id="menu-button" aria-label="Open navigation">â˜°</button>
         <div>
           <span class="topbar-label">Case Study Dashboard</span>
-          <p>Authoritative server • UDP 7777 • Zero-trust validation</p>
+          <p>Authoritative server â€¢ UDP 7777 â€¢ Zero-trust validation</p>
         </div>
         <div class="topbar-right">
-          <div class="system-pill" id="monitoring-status"><span></span> Connecting backend…</div>
+          <div class="system-pill" id="monitoring-status"><span></span> Connecting backendâ€¦</div>
           <div class="avatar">RM</div>
         </div>
       </header>
@@ -182,7 +182,7 @@
                 <li>Apply game rules</li>
                 <li>Broadcast state</li>
               </ul>
-              <div class="server-shield">✓</div>
+              <div class="server-shield">âœ“</div>
             </div>
 
             <div class="flow-line line-b"><span></span></div>
@@ -303,7 +303,7 @@ sudo ufw allow from 10.0.0.0/24 to any port 22 proto tcp
 sudo ufw --force enable
 sudo ufw status verbose</code></pre>
             <div class="terminal-output" id="terminal-output">
-              <span>STATUS</span> active · default deny incoming · UDP 7777 allowed
+              <span>STATUS</span> active Â· default deny incoming Â· UDP 7777 allowed
             </div>
           </div>
         </div>
@@ -342,14 +342,14 @@ sudo ufw status verbose</code></pre>
             </label>
 
             <div class="condition-grid">
-              <button class="condition-button" data-condition="duplicate"><span>⧉</span>Duplicate</button>
-              <button class="condition-button" data-condition="reorder"><span>⇄</span>Out of order</button>
-              <button class="condition-button" data-condition="malformed"><span>⚠</span>Malformed</button>
-              <button class="condition-button" data-condition="flood"><span>≋</span>Packet flood</button>
+              <button class="condition-button" data-condition="duplicate"><span>â§‰</span>Duplicate</button>
+              <button class="condition-button" data-condition="reorder"><span>â‡„</span>Out of order</button>
+              <button class="condition-button" data-condition="malformed"><span>âš </span>Malformed</button>
+              <button class="condition-button" data-condition="flood"><span>â‰‹</span>Packet flood</button>
             </div>
 
             <button class="run-button" id="run-test">
-              <span class="run-icon">▶</span>
+              <span class="run-icon">â–¶</span>
               <span>Run security test</span>
             </button>
           </div>
@@ -416,13 +416,19 @@ sudo ufw status verbose</code></pre>
           <p>Inspect flow direction, sequence numbers, flags, risk labels, and server decisions.</p>
         </div>
 
+        <div class="analysis-tabs" role="tablist" aria-label="Packet analysis views">
+          <button class="analysis-tab active" role="tab" aria-selected="true" data-analysis-tab="packets">Packets</button>
+          <button class="analysis-tab" role="tab" aria-selected="false" data-analysis-tab="intelligence">Intelligence</button>
+          <button class="analysis-tab" role="tab" aria-selected="false" data-analysis-tab="report">Report</button>
+        </div>
+
         <div class="analysis-grid">
           <div class="packet-table-card reveal">
-            <div class="table-toolbar">
-              <div class="filter-box"><span>⌕</span><input id="packet-filter" type="search" placeholder="Filter: udp.port == 7777" /></div>
+            <div class="table-toolbar" data-analysis-panel="packets">
+              <div class="filter-box"><span>âŒ•</span><input id="packet-filter" type="search" placeholder="Filter: udp.port == 7777" /></div>
               <button id="inject-packet">Inject sample attack</button>
             </div>
-            <div class="packet-table-wrap">
+            <div class="packet-table-wrap" data-analysis-panel="packets">
               <table class="packet-table">
                 <thead>
                   <tr><th>No.</th><th>Source</th><th>Destination</th><th>Protocol</th><th>Length</th><th>Info</th><th>Decision</th></tr>
@@ -435,6 +441,25 @@ sudo ufw status verbose</code></pre>
                   <tr data-info="heartbeat seq 1845"><td>1845</td><td>10.0.0.21</td><td>10.0.0.5</td><td><span class="protocol">UDP</span></td><td>48</td><td>HEARTBEAT seq=1845</td><td><span class="decision allow">ALLOW</span></td></tr>
                 </tbody>
               </table>
+            </div>
+
+            <div class="analysis-panel" data-analysis-panel="intelligence" hidden>
+              <div class="intelligence-header"><span class="mini-label">Traffic intelligence</span><strong id="analysis-risk-level">Loading…</strong></div>
+              <div class="intelligence-metrics">
+                <div><span>Observed</span><strong id="analysis-total">—</strong></div>
+                <div><span>Rejected</span><strong id="analysis-rejected">—</strong></div>
+                <div><span>Rejection rate</span><strong id="analysis-rate">—</strong></div>
+              </div>
+              <p id="analysis-recommendation">Loading secure analysis…</p>
+              <div class="watchlist" id="analysis-watchlist"></div>
+            </div>
+
+            <div class="analysis-panel report-panel" data-analysis-panel="report" hidden>
+              <span class="mini-label">Portable security summary</span>
+              <h3>Generate a lab report</h3>
+              <p>Download a timestamped Markdown summary of the simulated security posture, controls, and traffic analysis.</p>
+              <button id="download-report">Download report</button>
+              <button id="export-packets" class="secondary-export">Export packet CSV</button>
             </div>
           </div>
 
@@ -497,7 +522,7 @@ sudo ufw status verbose</code></pre>
         <div class="final-banner reveal">
           <div class="final-visual">
             <div class="shield-wave"></div>
-            <span>✓</span>
+            <span>âœ“</span>
           </div>
           <div>
             <span class="section-kicker">Final outcome</span>

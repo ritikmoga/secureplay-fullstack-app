@@ -472,3 +472,21 @@ body.focus-mode .main-content { margin-left:78px; }
 .system-pill.offline { color: var(--red); border-color: color-mix(in srgb, var(--red) 35%, transparent); }
 .system-pill.offline > span { background: var(--red); box-shadow: 0 0 12px color-mix(in srgb, var(--red) 70%, transparent); }
 button:disabled { cursor: wait; opacity: .62; }
+
+.analysis-tabs { display:flex; gap:8px; margin:0 0 14px; }
+.analysis-tab { border:1px solid var(--line); border-radius:10px; padding:9px 13px; color:var(--muted); background:var(--panel-soft); font-size:8px; font-weight:850; cursor:pointer; transition:.2s; }
+.analysis-tab:hover, .analysis-tab.active { color:var(--cyan); border-color:var(--cyan); background:var(--cyan-soft); }
+.analysis-panel { min-height:316px; padding:24px; }
+.intelligence-header { display:flex; justify-content:space-between; align-items:center; padding-bottom:17px; border-bottom:1px solid var(--line); }
+.intelligence-header strong { color:var(--cyan); font-size:10px; text-transform:uppercase; }
+.intelligence-metrics { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:20px 0; }
+.intelligence-metrics > div { padding:13px; border:1px solid var(--line); border-radius:12px; background:var(--panel-soft); }
+.intelligence-metrics span { display:block; color:var(--faint); font-size:7px; text-transform:uppercase; letter-spacing:.5px; }
+.intelligence-metrics strong { display:block; margin-top:7px; font-size:17px; }
+.analysis-panel p { color:var(--muted); font-size:10px; line-height:1.7; }
+.watchlist { display:grid; gap:7px; margin-top:17px; }
+.watchlist div { display:flex; justify-content:space-between; gap:10px; padding:10px 12px; border-radius:9px; background:var(--panel-soft); color:var(--muted); font:500 8px ui-monospace,monospace; }
+.report-panel h3 { margin:12px 0 8px; font-size:20px; }
+.report-panel button { margin-top:14px; border:1px solid var(--cyan); border-radius:10px; padding:10px 13px; color:#00151d; background:var(--cyan); font-size:8px; font-weight:900; cursor:pointer; }
+.report-panel .secondary-export { margin-left:8px; color:var(--cyan); background:transparent; }
+@media (max-width:540px) { .analysis-tabs { overflow:auto; } .intelligence-metrics { grid-template-columns:1fr; } .report-panel .secondary-export { margin-left:4px; } }

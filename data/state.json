@@ -1,6 +1,6 @@
 {
-  "revision": 9,
-  "updatedAt": "2026-07-22T18:03:29.776Z",
+  "revision": 14,
+  "updatedAt": "2026-07-22T18:07:59.990Z",
   "firewall": {
     "enabled": true,
     "rules": {
@@ -11,6 +11,22 @@
     }
   },
   "events": [
+    {
+      "id": "21c79746-a61f-4b06-88bf-7bf8af299bff",
+      "createdAt": "2026-07-22T18:07:59.989Z",
+      "type": "warning",
+      "label": "DROP",
+      "payload": "duplicate sequence detected",
+      "reason": "anti-replay window"
+    },
+    {
+      "id": "e748d461-3365-4c69-9f33-ce6e1bd801d9",
+      "createdAt": "2026-07-22T18:07:59.989Z",
+      "type": "success",
+      "label": "ACCEPT",
+      "payload": "player_a move seq=3037",
+      "reason": "40 ms RTT"
+    },
     {
       "id": "e08bfd8c-0d82-4b33-a7d6-3e12bc3b404f",
       "createdAt": "2026-07-22T18:03:29.776Z",
@@ -69,6 +85,26 @@
     }
   ],
   "packets": [
+    {
+      "id": 1942,
+      "createdAt": "2026-07-22T18:07:59.989Z",
+      "source": "10.0.0.21",
+      "destination": "10.0.0.5",
+      "protocol": "UDP",
+      "length": 144,
+      "info": "Duplicate sequence inside replay window",
+      "decision": "DROP"
+    },
+    {
+      "id": 1911,
+      "createdAt": "2026-07-22T18:07:59.989Z",
+      "source": "10.0.0.21",
+      "destination": "10.0.0.5",
+      "protocol": "UDP",
+      "length": 182,
+      "info": "MOVE seq=6069 validated",
+      "decision": "ALLOW"
+    },
     {
       "id": 1883,
       "createdAt": "2026-07-22T18:03:29.776Z",
@@ -141,10 +177,10 @@
     }
   ],
   "aggregate": {
-    "simulations": 1,
-    "packetsSent": 2657,
-    "validated": 2604,
-    "rejected": 53,
-    "averageRtt": 33
+    "simulations": 2,
+    "packetsSent": 4207,
+    "validated": 4096,
+    "rejected": 111,
+    "averageRtt": 35
   }
 }

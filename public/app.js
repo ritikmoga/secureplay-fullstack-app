@@ -133,12 +133,12 @@
   const storedTheme = localStorage.getItem("secureplay-theme");
   if (storedTheme === "light") {
     document.body.classList.add("light-theme");
-    themeIcon.textContent = "☀";
+    themeIcon.textContent = "â˜€";
   }
   themeToggle.addEventListener("click", () => {
     document.body.classList.toggle("light-theme");
     const light = document.body.classList.contains("light-theme");
-    themeIcon.textContent = light ? "☀" : "☾";
+    themeIcon.textContent = light ? "â˜€" : "â˜¾";
     localStorage.setItem("secureplay-theme", light ? "light" : "dark");
     showToast(light ? "Light interface enabled" : "Dark interface enabled");
   });
@@ -321,7 +321,7 @@
 
     button.disabled = true;
     button.classList.add("running");
-    button.querySelector("span:last-child").textContent = "Backend testing…";
+    button.querySelector("span:last-child").textContent = "Backend testingâ€¦";
     try {
       const result = await api("/api/simulations", {
         method: "POST",
@@ -387,6 +387,82 @@
     }
   });
 
+  function downloadText(filename, content, type) {
+    const blob = new Blob([content], { type });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = filename;
+    link.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function renderAnalytics(analysis) {
+    $("#analysis-risk-level").textContent = analysis.riskLevel || "normal";
+    $("#analysis-total").textContent = Number(analysis.totalPackets || 0).toLocaleString();
+    $("#analysis-rejected").textContent = Number((analysis.decisions?.drop || 0) + (analysis.decisions?.block || 0)).toLocaleString();
+    $("#analysis-rate").textContent = `${Number(analysis.blockRate || 0)}%`;
+    $("#analysis-recommendation").textContent = analysis.recommendation || "No recommendation available.";
+    const watchlist = $("#analysis-watchlist");
+    watchlist.innerHTML = "";
+    (analysis.topSources || []).forEach((item) => {
+      const row = document.createElement("div");
+      row.innerHTML = `<span>${escapeHtml(item.source)}</span><span>${Number(item.blocked)} rejected / ${Number(item.total)} total</span>`;
+      watchlist.appendChild(row);
+    });
+    if (!watchlist.children.length) watchlist.innerHTML = "<div><span>No suspicious sources</span><span>Stable</span></div>";
+  }
+
+  async function loadAnalytics() {
+    try {
+      renderAnalytics(await api("/api/analytics"));
+    } catch (error) {
+      $("#analysis-recommendation").textContent = error.message;
+    }
+  }
+
+  $$(".analysis-tab").forEach((tab) => tab.addEventListener("click", async () => {
+    const view = tab.dataset.analysisTab;
+    $$(".analysis-tab").forEach((item) => {
+      const active = item === tab;
+      item.classList.toggle("active", active);
+      item.setAttribute("aria-selected", String(active));
+    });
+    $$('[data-analysis-panel]').forEach((panel) => {
+      panel.hidden = panel.dataset.analysisPanel !== view;
+    });
+    if (view === "intelligence") await loadAnalytics();
+  }));
+
+  $("#download-report").addEventListener("click", async () => {
+    const button = $("#download-report");
+    button.disabled = true;
+    try {
+      const payload = await api("/api/reports/security");
+      downloadText(`secureplay-report-${new Date().toISOString().slice(0, 10)}.md`, payload.report, "text/markdown;charset=utf-8");
+      showToast("Security report downloaded");
+    } catch (error) {
+      showToast(error.message);
+    } finally {
+      button.disabled = false;
+    }
+  });
+
+  $("#export-packets").addEventListener("click", async () => {
+    const button = $("#export-packets");
+    button.disabled = true;
+    try {
+      const packets = await api("/api/packets?limit=100");
+      const columns = ["id", "createdAt", "source", "destination", "protocol", "length", "info", "decision"];
+      const csv = [columns.join(","), ...packets.map((packet) => columns.map((key) => `"${String(packet[key] ?? "").replaceAll('"', '""')}"`).join(","))].join("\n");
+      downloadText(`secureplay-packets-${new Date().toISOString().slice(0, 10)}.csv`, csv, "text/csv;charset=utf-8");
+      showToast("Packet CSV downloaded");
+    } catch (error) {
+      showToast(error.message);
+    } finally {
+      button.disabled = false;
+    }
+  });
   function connectEventStream() {
     const stream = new EventSource("/api/stream");
     state.socket = stream;
@@ -396,7 +472,7 @@
       let data;
       try { data = JSON.parse(message.data); } catch { return; }
       if (data.event === "heartbeat") {
-        setBackendStatus(true, `Live monitoring · ${data.payload.clients} viewer${data.payload.clients === 1 ? "" : "s"}`);
+        setBackendStatus(true, `Live monitoring Â· ${data.payload.clients} viewer${data.payload.clients === 1 ? "" : "s"}`);
         renderPosture(data.payload.posture);
       }
       if (data.event === "firewall.updated" || data.event === "firewall.rule.updated") {
@@ -405,11 +481,11 @@
       if (data.event === "events.cleared") $("#event-list").innerHTML = "";
     };
     ["connected", "heartbeat", "firewall.updated", "firewall.rule.updated", "events.cleared", "simulation.completed", "packet.injected"].forEach((eventName) => stream.addEventListener(eventName, handle));
-    stream.addEventListener("error", () => setBackendStatus(false, "Reconnecting backend…"));
+    stream.addEventListener("error", () => setBackendStatus(false, "Reconnecting backendâ€¦"));
   }
 
   async function bootstrap() {
-    setBackendStatus(false, "Connecting backend…");
+    setBackendStatus(false, "Connecting backendâ€¦");
     try {
       const data = await api("/api/bootstrap");
       renderFirewall(data.firewall, data.posture);
@@ -427,7 +503,7 @@
   // Footer year
   $("#footer-year").textContent = new Date().getFullYear();
 
-  // Motion canvas — subtle connected particles
+  // Motion canvas â€” subtle connected particles
   const canvas = $("#motion-canvas");
   const ctx = canvas.getContext("2d", { alpha: true });
   let particles = [];

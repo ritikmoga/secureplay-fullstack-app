@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: secureplay-network-lab
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: TRUST_PROXY
+        value: "1"
+      - key: SESSION_TTL_MINUTES
+        value: "120"

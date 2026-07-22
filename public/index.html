@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="SecurePlay Network Lab — an interactive frontend case study for secure multiplayer networking, firewall controls, traffic simulation, and packet analysis." />
+  <title>SecurePlay Network Lab</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <canvas id="motion-canvas" aria-hidden="true"></canvas>
+  <div class="noise" aria-hidden="true"></div>
+
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand-block">
+        <div class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 64 64" role="img">
+            <path d="M32 4 55 13v16c0 15-9.7 25.9-23 31C18.7 54.9 9 44 9 29V13L32 4Z" fill="none" stroke="currentColor" stroke-width="4"/>
+            <path d="M21 31 28 38 44 21" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div>
+          <span class="eyebrow">Multiplayer Security</span>
+          <h1>SecurePlay</h1>
+        </div>
+      </div>
+
+      <nav class="side-nav" aria-label="Primary navigation">
+        <a class="nav-link active" href="#overview" data-section="overview">
+          <span class="nav-icon">01</span><span>Overview</span>
+        </a>
+        <a class="nav-link" href="#architecture" data-section="architecture">
+          <span class="nav-icon">02</span><span>Architecture</span>
+        </a>
+        <a class="nav-link" href="#firewall" data-section="firewall">
+          <span class="nav-icon">03</span><span>Firewall</span>
+        </a>
+        <a class="nav-link" href="#simulation" data-section="simulation">
+          <span class="nav-icon">04</span><span>Traffic Lab</span>
+        </a>
+        <a class="nav-link" href="#analysis" data-section="analysis">
+          <span class="nav-icon">05</span><span>Packet Analysis</span>
+        </a>
+        <a class="nav-link" href="#recommendations" data-section="recommendations">
+          <span class="nav-icon">06</span><span>Recommendations</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-card">
+        <div class="live-dot"></div>
+        <div>
+          <strong>Lab status</strong>
+          <span id="lab-status">Server protected</span>
+        </div>
+      </div>
+
+      <div class="sidebar-actions">
+        <button class="icon-button" id="theme-toggle" aria-label="Toggle interface theme" title="Toggle theme">
+          <span id="theme-icon">☾</span>
+        </button>
+        <button class="primary-small" id="presentation-mode">Focus mode</button>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <button class="menu-button" id="menu-button" aria-label="Open navigation">☰</button>
+        <div>
+          <span class="topbar-label">Case Study Dashboard</span>
+          <p>Authoritative server • UDP 7777 • Zero-trust validation</p>
+        </div>
+        <div class="topbar-right">
+          <div class="system-pill" id="monitoring-status"><span></span> Connecting backend…</div>
+          <div class="avatar">RM</div>
+        </div>
+      </header>
+
+      <section class="hero section-block" id="overview" data-observe>
+        <div class="hero-copy reveal">
+          <div class="section-kicker">Secure multiplayer networking</div>
+          <h2>Control the match.<br><span>Trust the server.</span></h2>
+          <p>
+            An interactive frontend case study demonstrating a secure multiplayer game architecture,
+            firewall enforcement, UDP traffic testing, packet inspection, and practical mitigation controls.
+          </p>
+          <div class="hero-actions">
+            <a class="primary-button" href="#simulation">Launch traffic lab</a>
+            <a class="secondary-button" href="#architecture">Explore architecture</a>
+          </div>
+          <div class="hero-stats">
+            <div><strong class="count" data-target="2">0</strong><span>Connected players</span></div>
+            <div><strong class="count" data-target="7777">0</strong><span>UDP game port</span></div>
+            <div><strong class="count" data-target="99">0</strong><span>Validation score</span></div>
+          </div>
+        </div>
+
+        <div class="hero-visual reveal delay-1" aria-label="Animated multiplayer network visualization">
+          <div class="radar-grid"></div>
+          <div class="orbit orbit-one"></div>
+          <div class="orbit orbit-two"></div>
+          <div class="server-core">
+            <div class="core-ring"></div>
+            <svg viewBox="0 0 96 96" aria-hidden="true">
+              <rect x="21" y="20" width="54" height="17" rx="5" fill="none" stroke="currentColor" stroke-width="4"/>
+              <rect x="21" y="40" width="54" height="17" rx="5" fill="none" stroke="currentColor" stroke-width="4"/>
+              <rect x="21" y="60" width="54" height="17" rx="5" fill="none" stroke="currentColor" stroke-width="4"/>
+              <circle cx="32" cy="28.5" r="2.5" fill="currentColor"/>
+              <circle cx="32" cy="48.5" r="2.5" fill="currentColor"/>
+              <circle cx="32" cy="68.5" r="2.5" fill="currentColor"/>
+            </svg>
+            <strong>AUTHORITATIVE</strong>
+            <span>LINUX SERVER</span>
+          </div>
+          <div class="player-node player-a">
+            <span class="node-pulse"></span>
+            <strong>Player A</strong><small>12 ms</small>
+          </div>
+          <div class="player-node player-b">
+            <span class="node-pulse"></span>
+            <strong>Player B</strong><small>18 ms</small>
+          </div>
+          <div class="packet packet-a">x,y,z</div>
+          <div class="packet packet-b">action</div>
+          <div class="visual-caption"><span></span> State validation and trusted broadcast</div>
+        </div>
+      </section>
+
+      <section class="summary-grid section-block" data-observe>
+        <article class="glass-card reveal">
+          <div class="card-icon cyan">P</div>
+          <div>
+            <span class="mini-label">Problem</span>
+            <h3>Untrusted clients can manipulate state.</h3>
+            <p>Client-hosted models expose the match to cheating, spoofing, replay traffic, and host advantage.</p>
+          </div>
+        </article>
+        <article class="glass-card reveal delay-1">
+          <div class="card-icon violet">S</div>
+          <div>
+            <span class="mini-label">Solution</span>
+            <h3>Centralize authority and validate every action.</h3>
+            <p>The server checks movement, timing, identity, rate limits, payload structure, and game rules.</p>
+          </div>
+        </article>
+        <article class="glass-card reveal delay-2">
+          <div class="card-icon green">R</div>
+          <div>
+            <span class="mini-label">Result</span>
+            <h3>Consistent gameplay with reduced attack surface.</h3>
+            <p>Firewall restrictions, encrypted sessions, observability, and resilient packet handling improve trust.</p>
+          </div>
+        </article>
+      </section>
+
+      <section class="section-block architecture-section" id="architecture" data-observe>
+        <div class="section-heading reveal">
+          <div>
+            <span class="section-kicker">System design</span>
+            <h2>Authoritative architecture</h2>
+          </div>
+          <p>The server is the only trusted source of world state. Clients send intent, not final truth.</p>
+        </div>
+
+        <div class="architecture-layout">
+          <div class="architecture-canvas reveal">
+            <div class="flow-node client-node left-client">
+              <span class="node-type">CLIENT</span>
+              <strong>Player A</strong>
+              <code>{x, y, z, action}</code>
+              <div class="health"><span style="width:82%"></span></div>
+            </div>
+
+            <div class="flow-line line-a"><span></span></div>
+
+            <div class="flow-node server-node">
+              <span class="node-type">TRUST BOUNDARY</span>
+              <strong>Dedicated Server</strong>
+              <ul>
+                <li>Authenticate session</li>
+                <li>Validate movement</li>
+                <li>Apply game rules</li>
+                <li>Broadcast state</li>
+              </ul>
+              <div class="server-shield">✓</div>
+            </div>
+
+            <div class="flow-line line-b"><span></span></div>
+
+            <div class="flow-node client-node right-client">
+              <span class="node-type">CLIENT</span>
+              <strong>Player B</strong>
+              <code>{x, y, z, action}</code>
+              <div class="health"><span style="width:68%"></span></div>
+            </div>
+
+            <div class="broadcast-line broadcast-left"><span>validated state</span></div>
+            <div class="broadcast-line broadcast-right"><span>validated state</span></div>
+          </div>
+
+          <div class="comparison-card reveal delay-1">
+            <div class="comparison-header">
+              <div>
+                <span class="mini-label">Architecture comparison</span>
+                <h3>Why dedicated wins</h3>
+              </div>
+              <span class="score-badge">9.4 / 10</span>
+            </div>
+            <div class="comparison-row">
+              <span>Dedicated server</span>
+              <div class="bar"><i style="width:94%"></i></div>
+              <strong>High</strong>
+            </div>
+            <div class="comparison-row">
+              <span>Client-hosted</span>
+              <div class="bar"><i style="width:45%"></i></div>
+              <strong>Medium</strong>
+            </div>
+            <div class="comparison-row">
+              <span>LAN peer-to-peer</span>
+              <div class="bar"><i style="width:32%"></i></div>
+              <strong>Low</strong>
+            </div>
+            <div class="comparison-row">
+              <span>Relay / hybrid</span>
+              <div class="bar"><i style="width:73%"></i></div>
+              <strong>Good</strong>
+            </div>
+            <div class="comparison-note">
+              <span>Decision</span>
+              <p>Use an authoritative Linux server with relay fallback only where NAT traversal requires it.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section-block firewall-section" id="firewall" data-observe>
+        <div class="section-heading reveal">
+          <div>
+            <span class="section-kicker">Network hardening</span>
+            <h2>Firewall command center</h2>
+          </div>
+          <p>Expose only the required UDP game port and keep administration restricted to trusted sources.</p>
+        </div>
+
+        <div class="firewall-layout">
+          <div class="control-panel reveal">
+            <div class="panel-top">
+              <div>
+                <span class="mini-label">Policy controls</span>
+                <h3>Linux UFW profile</h3>
+              </div>
+              <button class="toggle on" id="firewall-toggle" aria-pressed="true"><span></span></button>
+            </div>
+
+            <div class="rule-list">
+              <div class="rule enabled" data-rule="game">
+                <div class="rule-status"></div>
+                <div><strong>ALLOW UDP 7777</strong><span>Public game traffic</span></div>
+                <button class="rule-toggle" aria-label="Toggle UDP 7777 rule">ON</button>
+              </div>
+              <div class="rule enabled" data-rule="ssh">
+                <div class="rule-status"></div>
+                <div><strong>ALLOW TCP 22</strong><span>Trusted admin network only</span></div>
+                <button class="rule-toggle" aria-label="Toggle SSH rule">ON</button>
+              </div>
+              <div class="rule enabled danger" data-rule="default">
+                <div class="rule-status"></div>
+                <div><strong>DENY INCOMING</strong><span>Block unapproved inbound traffic</span></div>
+                <button class="rule-toggle" aria-label="Toggle default deny rule">ON</button>
+              </div>
+              <div class="rule enabled" data-rule="rate">
+                <div class="rule-status"></div>
+                <div><strong>RATE LIMIT</strong><span>Control packet flooding</span></div>
+                <button class="rule-toggle" aria-label="Toggle rate limiting">ON</button>
+              </div>
+            </div>
+
+            <div class="security-meter">
+              <div class="meter-copy"><span>Security posture</span><strong id="security-score">96%</strong></div>
+              <div class="meter-track"><span id="security-meter-fill" style="width:96%"></span></div>
+            </div>
+          </div>
+
+          <div class="terminal-card reveal delay-1">
+            <div class="terminal-bar">
+              <div><span></span><span></span><span></span></div>
+              <strong>secureplay@server:~</strong>
+              <button id="copy-command">Copy</button>
+            </div>
+            <pre id="firewall-code"><code><span class="comment"># Reset and apply secure defaults</span>
+sudo ufw --force reset
+sudo ufw default deny incoming
+sudo ufw default allow outgoing
+
+<span class="comment"># Permit multiplayer game traffic</span>
+sudo ufw allow 7777/udp comment 'Game server'
+
+<span class="comment"># Restrict SSH to the admin subnet</span>
+sudo ufw allow from 10.0.0.0/24 to any port 22 proto tcp
+
+<span class="comment"># Enable and verify</span>
+sudo ufw --force enable
+sudo ufw status verbose</code></pre>
+            <div class="terminal-output" id="terminal-output">
+              <span>STATUS</span> active · default deny incoming · UDP 7777 allowed
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section-block simulation-section" id="simulation" data-observe>
+        <div class="section-heading reveal">
+          <div>
+            <span class="section-kicker">Interactive testing</span>
+            <h2>UDP traffic laboratory</h2>
+          </div>
+          <p>Generate controlled latency, loss, jitter, duplication, malformed payloads, and out-of-order traffic.</p>
+        </div>
+
+        <div class="simulation-layout">
+          <div class="simulator-panel reveal">
+            <div class="simulation-top">
+              <div>
+                <span class="mini-label">Test parameters</span>
+                <h3>Packet condition simulator</h3>
+              </div>
+              <span class="connection-badge"><i></i> UDP :7777</span>
+            </div>
+
+            <label class="range-control">
+              <div><span>Latency</span><strong><output id="latency-value">28</output> ms</strong></div>
+              <input id="latency-range" type="range" min="0" max="250" value="28" />
+            </label>
+            <label class="range-control">
+              <div><span>Packet loss</span><strong><output id="loss-value">2</output>%</strong></div>
+              <input id="loss-range" type="range" min="0" max="40" value="2" />
+            </label>
+            <label class="range-control">
+              <div><span>Jitter</span><strong><output id="jitter-value">7</output> ms</strong></div>
+              <input id="jitter-range" type="range" min="0" max="100" value="7" />
+            </label>
+
+            <div class="condition-grid">
+              <button class="condition-button" data-condition="duplicate"><span>⧉</span>Duplicate</button>
+              <button class="condition-button" data-condition="reorder"><span>⇄</span>Out of order</button>
+              <button class="condition-button" data-condition="malformed"><span>⚠</span>Malformed</button>
+              <button class="condition-button" data-condition="flood"><span>≋</span>Packet flood</button>
+            </div>
+
+            <button class="run-button" id="run-test">
+              <span class="run-icon">▶</span>
+              <span>Run security test</span>
+            </button>
+          </div>
+
+          <div class="telemetry-panel reveal delay-1">
+            <div class="telemetry-header">
+              <div>
+                <span class="mini-label">Live telemetry</span>
+                <h3>Traffic health</h3>
+              </div>
+              <div class="telemetry-legend"><span class="good"></span>Accepted <span class="bad"></span>Rejected</div>
+            </div>
+
+            <div class="chart-wrap">
+              <svg class="line-chart" viewBox="0 0 640 250" preserveAspectRatio="none" aria-label="Animated packet latency chart">
+                <defs>
+                  <linearGradient id="chartFill" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="currentColor" stop-opacity="0.32"/>
+                    <stop offset="100%" stop-color="currentColor" stop-opacity="0"/>
+                  </linearGradient>
+                </defs>
+                <g class="chart-grid-lines">
+                  <line x1="0" x2="640" y1="40" y2="40"/>
+                  <line x1="0" x2="640" y1="95" y2="95"/>
+                  <line x1="0" x2="640" y1="150" y2="150"/>
+                  <line x1="0" x2="640" y1="205" y2="205"/>
+                </g>
+                <path id="area-path" class="area-path" d="M0,180 L64,170 L128,176 L192,138 L256,154 L320,121 L384,130 L448,104 L512,120 L576,86 L640,101 L640,250 L0,250 Z"/>
+                <path id="line-path" class="line-path" d="M0,180 L64,170 L128,176 L192,138 L256,154 L320,121 L384,130 L448,104 L512,120 L576,86 L640,101"/>
+                <circle id="chart-dot" cx="640" cy="101" r="6"/>
+              </svg>
+              <div class="chart-y-labels"><span>100 ms</span><span>50 ms</span><span>0 ms</span></div>
+            </div>
+
+            <div class="metric-grid">
+              <div class="metric-card"><span>Packets sent</span><strong id="packets-sent">1,240</strong><small>this session</small></div>
+              <div class="metric-card"><span>Validated</span><strong id="validated-packets">1,215</strong><small>98.0% accepted</small></div>
+              <div class="metric-card warning"><span>Rejected</span><strong id="rejected-packets">25</strong><small>rule violations</small></div>
+              <div class="metric-card"><span>Avg. RTT</span><strong id="average-rtt">31 ms</strong><small>stable</small></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="event-console reveal delay-2">
+          <div class="event-console-header">
+            <div><span class="live-dot"></span><strong>Validation event stream</strong></div>
+            <button id="clear-events">Clear log</button>
+          </div>
+          <div class="event-list" id="event-list" aria-live="polite">
+            <div class="event-row success"><time>00:00:01.214</time><span>ACCEPT</span><code>player_a move {x:15.2,y:0,z:8.7}</code><em>velocity valid</em></div>
+            <div class="event-row success"><time>00:00:01.248</time><span>ACCEPT</span><code>player_b action {type:"jump"}</code><em>sequence 1842</em></div>
+            <div class="event-row warning"><time>00:00:01.281</time><span>DROP</span><code>unknown_client packet rate 355/s</code><em>rate limit</em></div>
+            <div class="event-row danger"><time>00:00:01.315</time><span>BLOCK</span><code>player_a payload {x:"NaN"}</code><em>schema invalid</em></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section-block analysis-section" id="analysis" data-observe>
+        <div class="section-heading reveal">
+          <div>
+            <span class="section-kicker">Wireshark-style inspection</span>
+            <h2>Packet analysis workspace</h2>
+          </div>
+          <p>Inspect flow direction, sequence numbers, flags, risk labels, and server decisions.</p>
+        </div>
+
+        <div class="analysis-grid">
+          <div class="packet-table-card reveal">
+            <div class="table-toolbar">
+              <div class="filter-box"><span>⌕</span><input id="packet-filter" type="search" placeholder="Filter: udp.port == 7777" /></div>
+              <button id="inject-packet">Inject sample attack</button>
+            </div>
+            <div class="packet-table-wrap">
+              <table class="packet-table">
+                <thead>
+                  <tr><th>No.</th><th>Source</th><th>Destination</th><th>Protocol</th><th>Length</th><th>Info</th><th>Decision</th></tr>
+                </thead>
+                <tbody id="packet-table-body">
+                  <tr data-info="move seq 1841"><td>1841</td><td>10.0.0.21</td><td>10.0.0.5</td><td><span class="protocol">UDP</span></td><td>82</td><td>MOVE seq=1841 x=15.2 z=8.7</td><td><span class="decision allow">ALLOW</span></td></tr>
+                  <tr data-info="action seq 1842"><td>1842</td><td>10.0.0.22</td><td>10.0.0.5</td><td><span class="protocol">UDP</span></td><td>64</td><td>ACTION seq=1842 jump</td><td><span class="decision allow">ALLOW</span></td></tr>
+                  <tr data-info="replay seq 1734"><td>1843</td><td>10.0.0.89</td><td>10.0.0.5</td><td><span class="protocol">UDP</span></td><td>82</td><td>MOVE replay seq=1734</td><td><span class="decision drop">DROP</span></td></tr>
+                  <tr data-info="malformed json"><td>1844</td><td>10.0.0.40</td><td>10.0.0.5</td><td><span class="protocol">UDP</span></td><td>402</td><td>MALFORMED JSON / size violation</td><td><span class="decision block">BLOCK</span></td></tr>
+                  <tr data-info="heartbeat seq 1845"><td>1845</td><td>10.0.0.21</td><td>10.0.0.5</td><td><span class="protocol">UDP</span></td><td>48</td><td>HEARTBEAT seq=1845</td><td><span class="decision allow">ALLOW</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="risk-stack reveal delay-1">
+            <article class="risk-card high">
+              <div class="risk-rank">01</div>
+              <div><span>Critical risk</span><h3>Packet flooding</h3><p>Attackers overwhelm the listener and increase CPU/network load.</p></div>
+              <strong>HIGH</strong>
+            </article>
+            <article class="risk-card medium">
+              <div class="risk-rank">02</div>
+              <div><span>Integrity risk</span><h3>Spoofing & replay</h3><p>Forged source identity or old packets attempt to alter gameplay.</p></div>
+              <strong>MED</strong>
+            </article>
+            <article class="risk-card low">
+              <div class="risk-rank">03</div>
+              <div><span>Parser risk</span><h3>Malformed payloads</h3><p>Unexpected types or oversized data target weak validation logic.</p></div>
+              <strong>LOW</strong>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section-block recommendations-section" id="recommendations" data-observe>
+        <div class="section-heading reveal">
+          <div>
+            <span class="section-kicker">Defense strategy</span>
+            <h2>Security recommendations</h2>
+          </div>
+          <p>Build defense in depth across identity, transport, validation, rate control, observability, and recovery.</p>
+        </div>
+
+        <div class="recommendation-grid">
+          <article class="recommendation-card reveal">
+            <span class="step">01</span><div class="recommendation-icon">ID</div>
+            <h3>Authenticate sessions</h3><p>Use short-lived signed tokens and bind each session to an authenticated player identity.</p>
+          </article>
+          <article class="recommendation-card reveal delay-1">
+            <span class="step">02</span><div class="recommendation-icon">ENC</div>
+            <h3>Protect transport</h3><p>Use DTLS or an authenticated encryption layer with nonces and sequence numbers.</p>
+          </article>
+          <article class="recommendation-card reveal delay-2">
+            <span class="step">03</span><div class="recommendation-icon">VAL</div>
+            <h3>Validate server-side</h3><p>Enforce schemas, movement limits, cooldowns, permissions, and state transitions.</p>
+          </article>
+          <article class="recommendation-card reveal">
+            <span class="step">04</span><div class="recommendation-icon">RAT</div>
+            <h3>Rate limit traffic</h3><p>Apply token-bucket controls per IP and player while preserving legitimate bursts.</p>
+          </article>
+          <article class="recommendation-card reveal delay-1">
+            <span class="step">05</span><div class="recommendation-icon">OBS</div>
+            <h3>Monitor continuously</h3><p>Capture latency, drops, anomalies, authentication failures, and firewall events.</p>
+          </article>
+          <article class="recommendation-card reveal delay-2">
+            <span class="step">06</span><div class="recommendation-icon">RES</div>
+            <h3>Design for recovery</h3><p>Use health checks, process isolation, safe restart, backups, and incident runbooks.</p>
+          </article>
+        </div>
+
+        <div class="final-banner reveal">
+          <div class="final-visual">
+            <div class="shield-wave"></div>
+            <span>✓</span>
+          </div>
+          <div>
+            <span class="section-kicker">Final outcome</span>
+            <h2>Secure gameplay without sacrificing responsiveness.</h2>
+            <p>An authoritative server, minimal firewall exposure, robust validation, and tested network resilience form a practical secure multiplayer foundation.</p>
+          </div>
+          <a class="primary-button" href="#overview">Return to top</a>
+        </div>
+      </section>
+
+      <footer>
+        <span>SecurePlay Network Lab</span>
+        <span>Frontend-only interactive case study</span>
+        <span id="footer-year"></span>
+      </footer>
+    </main>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="app.js"></script>
+</body>
+</html>

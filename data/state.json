@@ -1,0 +1,150 @@
+{
+  "revision": 9,
+  "updatedAt": "2026-07-22T18:03:29.776Z",
+  "firewall": {
+    "enabled": true,
+    "rules": {
+      "game": true,
+      "ssh": true,
+      "default": true,
+      "rate": true
+    }
+  },
+  "events": [
+    {
+      "id": "e08bfd8c-0d82-4b33-a7d6-3e12bc3b404f",
+      "createdAt": "2026-07-22T18:03:29.776Z",
+      "type": "danger",
+      "label": "BLOCK",
+      "payload": "external source invalid authentication tag",
+      "reason": "identity verification"
+    },
+    {
+      "id": "0e0944b0-76f5-431c-ac6e-673f7ca8e186",
+      "createdAt": "2026-07-22T18:03:28.096Z",
+      "type": "danger",
+      "label": "BLOCK",
+      "payload": "external source invalid authentication tag",
+      "reason": "identity verification"
+    },
+    {
+      "id": "e28ee6f1-1293-40da-90d2-5dc1471cc3d9",
+      "createdAt": "2026-07-22T18:03:09.180Z",
+      "type": "success",
+      "label": "PASS",
+      "payload": "baseline network profile completed",
+      "reason": "no critical anomaly"
+    },
+    {
+      "id": "b2327e3d-a97c-4da0-ab5c-1bfe771aa7f2",
+      "createdAt": "2026-07-22T18:03:09.179Z",
+      "type": "success",
+      "label": "ACCEPT",
+      "payload": "player_a move seq=2942",
+      "reason": "37 ms RTT"
+    },
+    {
+      "id": "c7979bb1-5a47-47ef-b2a5-4c6f16702606",
+      "type": "success",
+      "label": "ACCEPT",
+      "payload": "player_a move seq=4821",
+      "reason": "31 ms RTT",
+      "createdAt": "2026-07-22T17:56:56.751Z"
+    },
+    {
+      "id": "f90793f9-8af4-41b9-ad2f-f010dba42975",
+      "type": "warning",
+      "label": "DROP",
+      "payload": "duplicate sequence detected",
+      "reason": "anti-replay window",
+      "createdAt": "2026-07-22T17:56:56.751Z"
+    },
+    {
+      "id": "ab6a24b6-0bc9-49c3-8a4e-f587ffebf62d",
+      "type": "danger",
+      "label": "BLOCK",
+      "payload": "payload type mismatch / oversize",
+      "reason": "schema invalid",
+      "createdAt": "2026-07-22T17:56:56.751Z"
+    }
+  ],
+  "packets": [
+    {
+      "id": 1883,
+      "createdAt": "2026-07-22T18:03:29.776Z",
+      "source": "203.0.113.27",
+      "destination": "10.0.0.5",
+      "protocol": "UDP",
+      "length": 517,
+      "info": "SPOOFED AUTH / invalid MAC",
+      "decision": "BLOCK"
+    },
+    {
+      "id": 1867,
+      "createdAt": "2026-07-22T18:03:28.096Z",
+      "source": "203.0.113.148",
+      "destination": "10.0.0.5",
+      "protocol": "UDP",
+      "length": 517,
+      "info": "SPOOFED AUTH / invalid MAC",
+      "decision": "BLOCK"
+    },
+    {
+      "id": 1851,
+      "createdAt": "2026-07-22T18:03:09.180Z",
+      "source": "10.0.0.21",
+      "destination": "10.0.0.5",
+      "protocol": "UDP",
+      "length": 160,
+      "info": "MOVE seq=6600 validated",
+      "decision": "ALLOW"
+    },
+    {
+      "id": 1845,
+      "source": "10.0.0.21",
+      "destination": "10.0.0.5",
+      "protocol": "UDP",
+      "length": 142,
+      "info": "MOVE seq=4821 position delta",
+      "decision": "ALLOW",
+      "createdAt": "2026-07-22T17:56:56.750Z"
+    },
+    {
+      "id": 1844,
+      "source": "10.0.0.22",
+      "destination": "10.0.0.5",
+      "protocol": "UDP",
+      "length": 128,
+      "info": "ACTION seq=3910 jump",
+      "decision": "ALLOW",
+      "createdAt": "2026-07-22T17:56:56.751Z"
+    },
+    {
+      "id": 1843,
+      "source": "10.0.0.21",
+      "destination": "10.0.0.5",
+      "protocol": "UDP",
+      "length": 166,
+      "info": "MOVE duplicate seq=4819",
+      "decision": "DROP",
+      "createdAt": "2026-07-22T17:56:56.751Z"
+    },
+    {
+      "id": 1842,
+      "source": "198.51.100.77",
+      "destination": "10.0.0.5",
+      "protocol": "UDP",
+      "length": 614,
+      "info": "Oversize payload / invalid schema",
+      "decision": "BLOCK",
+      "createdAt": "2026-07-22T17:56:56.751Z"
+    }
+  ],
+  "aggregate": {
+    "simulations": 1,
+    "packetsSent": 2657,
+    "validated": 2604,
+    "rejected": 53,
+    "averageRtt": 33
+  }
+}
